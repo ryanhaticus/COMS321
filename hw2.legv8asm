@@ -1,3 +1,5 @@
+// @author Ryan Huellen <rhuellen@iastate.edu>
+// @course COM S 321, Fall 2023
 main:
   ADD X0, XZR, XZR
 
@@ -114,6 +116,74 @@ swap:
   STUR X9, [X3, #0]
   STUR X10, [X2, #0]
   BR LR
+
+// Finds the index for a value and performs the swap for each element from the start.
+// @param X0: Address to the array's first element.
+// @param X1: The length of the array.
+// @param X5: The index to start swapping from.
+// @param X6: The index to swap.
+// @param X7: Address of the value to swap.
+complete_cycle:
+  SUBI SP, SP, #8
+  STUR LR, [SP, #0]
+
+  ADD X9, XZR, XZR
+  ADD X9, X9, X6
+
+  ADD X10, XZR, XZR
+  SUB X10, X9, X5
+
+  CBZ X10, complete_cycle_end
+
+  LDUR X11, [X7, #0] // value
+
+  complete_cycle_loop:
+    // find_index
+    ADD X2, XZR, XZR
+    ADD X2, X2, X5
+
+    ADD X3, XZR, XZR
+    ADD X3, X3, X11
+
+    BL find_index
+    
+    ADD X9, X9, XZR
+    ADD X9, X9, X4
+
+    // skip_duplicates
+    ADD X2, XZR, XZR
+    ADD X2, X2, X9
+
+    ADD X3, XZR, XZR
+    ADD X3, X3, X11
+
+    BL skip_duplicates
+
+    ADD X9, XZR, XZR
+    ADD X9, X9, X4
+
+    // swap
+    ADD X12, XZR, XZR
+    ADD X12, X12, X9
+    LSL X12, X12, #3
+    ADD X12, X12, X0
+
+    ADD X2, XZR, XZR
+    ADD X2, X2, X12
+
+    ADD X3, XZR, XZR
+    ADD X3, X3, X7
+
+    BL swap
+
+    ADD X10, XZR, XZR
+    SUB X10, X9, X5
+    CBNZ X10, complete_cycle_loop
+    
+  complete_cycle_end:
+    LDUR LR, [SP, #0]
+    ADDI SP, SP, #8
+    BR LR
 
 circle_sort:
   SUBI SP, SP, #8
