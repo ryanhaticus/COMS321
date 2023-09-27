@@ -8,7 +8,7 @@ main:
 
   BL fill
 
-  BL circle_sort
+  BL cycle_sort
 
   B end
 
@@ -128,66 +128,71 @@ complete_cycle:
   STUR LR, [SP, #0]
 
   ADD X9, XZR, XZR
-  ADD X9, X9, X6
-
-  ADD X10, XZR, XZR
-  SUB X10, X9, X5
-
-  CBZ X10, complete_cycle_end
-
-  LDUR X11, [X7, #0] // value
+  SUB X9, X6, X5
+  CBZ X9, skip_cycle_loop
 
   complete_cycle_loop:
-    // find_index
-    ADD X2, XZR, XZR
-    ADD X2, X2, X5
+      // find_index
+      // @param X2: The index to start searching from.
+      // @param X3: The value to search with.
+      ADD X2, XZR, XZR
+      ADD X2, X2, X5
+      
+      LDUR X11, [X7, #0]
 
-    ADD X3, XZR, XZR
-    ADD X3, X3, X11
+      ADD X3, XZR, XZR
+      ADD X3, X3, X11
 
-    BL find_index
-    
-    ADD X9, X9, XZR
-    ADD X9, X9, X4
+      BL find_index
 
-    // skip_duplicates
-    ADD X2, XZR, XZR
-    ADD X2, X2, X9
+      ADD X6, XZR, XZR
+      ADD X6, X6, X4
 
-    ADD X3, XZR, XZR
-    ADD X3, X3, X11
+      // skip_duplicates
+      // @param X2: The index to start searching from.
+      // @param X3: The value to search against.
 
-    BL skip_duplicates
+      ADD X2, XZR, XZR
+      ADD X2, X2, X6
 
-    ADD X9, XZR, XZR
-    ADD X9, X9, X4
+      LDUR X11, [X7, #0]
 
-    // swap
-    ADD X12, XZR, XZR
-    ADD X12, X12, X9
-    LSL X12, X12, #3
-    ADD X12, X12, X0
+      ADD X3, XZR, XZR
+      ADD X3, X3, X11
 
-    ADD X2, XZR, XZR
-    ADD X2, X2, X12
+      BL skip_duplicates
 
-    ADD X3, XZR, XZR
-    ADD X3, X3, X7
+      ADD X6, XZR, XZR
+      ADD X6, X6, X4
 
-    BL swap
+      // swap
+      // @param X2: Address to the first value.
+      // @param X3: Address to the second value.
 
-    ADD X10, XZR, XZR
-    SUB X10, X9, X5
-    CBNZ X10, complete_cycle_loop
-    
-  complete_cycle_end:
-    LDUR LR, [SP, #0]
-    ADDI SP, SP, #8
-    BR LR
+      ADD X2, XZR, XZR
+      ADD X2, X2, X7
 
-circle_sort:
+      ADD X3, XZR, XZR
+      ADD X3, X3, X6
+      LSL X3, X3, #3
+      ADD X3, X3, X0
+
+      BL swap
+
+  skip_cycle_loop:
+
+  LDUR LR, [SP, #0]
+  ADDI SP, SP, #8
+  BR LR
+
+// Sorts an array using cycle sort.
+// @param X0: Address to the array's first element.
+// @param X1: The length of the array.
+cycle_sort:
   SUBI SP, SP, #8
   STUR LR, [SP, #0]
+
+  // TODO: Implement cycle sort.
 
   LDUR LR, [SP, #0]
   ADDI SP, SP, #8
