@@ -193,6 +193,184 @@ cycle_sort:
   STUR LR, [SP, #0]
 
   // TODO: Implement cycle sort.
+  ADD X9, XZR, XZR // cstart
+
+  B cycle_sort_loop
+
+  cycle_sort_increment:
+    ADDI X9, X9, #1
+
+  cycle_sort_loop:
+    ADD X10, XZR, XZR
+    ADD X10, X10, X9
+    LSL X10, X10, #3
+    ADD X10, X10, X0 // &a[cstart]
+
+    LDUR X11, [X10, #0] // a[cstart]
+
+    // idx = find_index(a, n, cstart + 1, a[cstart]) = X12
+    // @param X0: Address to the array's first element.
+    // @param X1: The length of the array.
+    // @param X2: The index to start searching from.
+    // @param X3: The value to search with.
+
+    ADD X2, XZR, XZR
+    ADD X2, X2, X9 // cstart in find_index
+
+    ADD X3, XZR, XZR
+    ADD X3, X3, X11 // a[cstart] (val) in find_index
+
+    // start saving X9-X11
+      ADD X19, XZR, XZR
+      ADD X19, X19, X9
+
+      ADD X20, XZR, XZR
+      ADD X20, X20, X10
+
+      ADD X21, XZR, XZR
+      ADD X21, X21, X11
+    // do function
+
+    BL find_index
+
+    // restore X9-X11
+
+    ADD X9, XZR, XZR
+    ADD X9, X9, X19
+
+    ADD X10, XZR, XZR
+    ADD X10, X10, X20
+
+    ADD X11, XZR, XZR
+    ADD X11, X11, X21
+
+    // process response
+
+    ADD X12, XZR, XZR
+    ADD X12, X12, X4 // idx
+
+    ADD X13, XZR, XZR
+    SUB X13, X12, X9 // idx - cstart
+
+    CBZ X13, cycle_sort_increment // idx == cstart, continue;
+
+    // idx = skip_duplicates(a, idx, val) = X12;
+    // @param X2: The index to start searching from.
+    // @param X3: The value to search against.
+
+    ADD X2, XZR, XZR
+    ADD X2, X2, X12 // idx in skip_duplicates
+
+    ADD X3, XZR, XZR
+    ADD X3, X3, X11 // a[cstart] (val) in skip_duplicates
+
+    // save X9-X11
+    ADD X19, XZR, XZR
+    ADD X19, X19, X9
+
+    ADD X20, XZR, XZR
+    ADD X20, X20, X10
+
+    ADD X21, XZR, XZR
+    ADD X21, X21, X11
+
+    BL skip_duplicates
+
+    // restore X9-X11
+    ADD X9, XZR, XZR
+    ADD X9, X9, X19
+
+    ADD X10, XZR, XZR
+    ADD X10, X10, X20
+
+    ADD X11, XZR, XZR
+    ADD X11, X11, X21
+
+    // process response
+    ADD X12, XZR, XZR
+    ADD X12, X12, X4 // idx
+
+    // swap(&val, &a[idx]);
+    // @param X2: Address to the first value.
+    // @param X3: Address to the second value.
+
+    ADD X2, XZR, XZR
+    ADD X2, X2, X10 // &a[cstart] in swap
+
+    ADD X13, XZR, XZR
+    ADD X13, X13, X12
+    LSL X13, X13, #3
+    ADD X13, X13, X0 // &a[idx]
+
+    ADD X3, XZR, XZR
+    ADD X3, X3, X13 // &a[idx] in swap
+
+    // save X9-X13
+    ADD X19, XZR, XZR
+    ADD X19, X19, X9
+
+    ADD X20, XZR, XZR
+    ADD X20, X20, X10
+
+    ADD X21, XZR, XZR
+    ADD X21, X21, X11
+
+    ADD X22, XZR, XZR
+    ADD X22, X22, X12
+
+    ADD X23, XZR, XZR
+    ADD X23, X23, X13
+
+    BL swap
+
+    // restore X9-X13
+    ADD X9, XZR, XZR
+    ADD X9, X9, X19
+
+    ADD X10, XZR, XZR
+    ADD X10, X10, X20
+
+    ADD X11, XZR, XZR
+    ADD X11, X11, X21
+
+    ADD X12, XZR, XZR
+    ADD X12, X12, X22
+
+    ADD X13, XZR, XZR
+    ADD X13, X13, X23
+
+    // complete_cycle
+    // @param X5: The index to start swapping from.
+    // @param X6: The index to swap.
+    // @param X7: Address of the value to swap.
+
+    ADD X5, XZR, XZR
+    ADD X5, X5, X9 // cstart in complete_cycle
+
+    ADD X6, XZR, XZR
+    ADD X6, X6, X12 // idx in complete_cycle
+
+    ADD X7, XZR, XZR
+    ADD X7, X7, X10 // &a[cstart] in complete_cycle
+
+    // save X9
+    ADD X19, XZR, XZR
+    ADD X19, X19, X9
+
+    BL complete_cycle
+
+    // restore X9
+    ADD X9, XZR, XZR
+    ADD X9, X9, X19
+
+    // check if we should loop
+    ADDI X9, X9, #1
+
+    ADD X10, XZR, XZR
+    SUB X10, X1, X9
+    SUBI X10, X10, #1
+
+    CBNZ X10, cycle_sort_loop
 
   LDUR LR, [SP, #0]
   ADDI SP, SP, #8
