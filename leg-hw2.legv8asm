@@ -4,7 +4,7 @@ main:
   ADD X0, XZR, XZR
 
   ADD X1, XZR, XZR
-  ADDI X1, X1, #12
+  ADDI X1, X1, #10
 
   BL fill
 
@@ -370,6 +370,8 @@ cycle_sort:
     SUB X10, X1, X9
     SUBI X10, X10, #1
 
+    PRNT X0
+
     CBNZ X10, cycle_sort_loop
 
   LDUR LR, [SP, #0]
@@ -377,4 +379,3 @@ cycle_sort:
   BR LR
 
 end:
-  DUMP

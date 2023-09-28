@@ -1,3 +1,5 @@
+#include <stdio.h>
+
 /* To compile this program:
  *   gcc cs321_pa1_f2023_cycle_sort.c -o cs321_pa1_f2023_cycle_sort
  * Change N and recompile to run on arrays of different sizes.
@@ -27,7 +29,7 @@
  * implement.
  */
 
-#define N 10000
+#define N 10
 
 /* Here is a single-function version of cycle sort.  This, or something very
  * similar, is probably what you would write if you were doing this in a 
