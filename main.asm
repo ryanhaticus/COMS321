@@ -17,7 +17,7 @@ main:
 
     // Setup main
     ADD X19, XZR, XZR // &a
-    ADDI X20, XZR, #23 // n = 4
+    ADDI X20, XZR, #24 // n = 24
 
     // Load parameters and call fill
     ADD X0, XZR, X19
@@ -33,7 +33,7 @@ main:
     ADD X0, XZR, X19
     ADD X1, XZR, XZR
     SUBI X2, X20, #1
-    ADDI X3, XZR, #3
+    ADDI X3, XZR, #0
 
     BL binary_search
 
@@ -43,7 +43,7 @@ main:
     ADD X0, XZR, X19
     ADD X1, XZR, XZR
     SUBI X2, X20, #1
-    ADDI X3, XZR, #22
+    ADDI X3, XZR, #23
 
     BL binary_search
 
@@ -53,7 +53,17 @@ main:
     ADD X0, XZR, X19
     ADD X1, XZR, XZR
     SUBI X2, X20, #1
-    ADDI X3, XZR, #29
+    ADDI X3, XZR, #12
+
+    BL binary_search
+
+    PRNT X4
+
+    // Load parameters and call binary search
+    ADD X0, XZR, X19
+    ADD X1, XZR, XZR
+    SUBI X2, X20, #1
+    ADDI X3, XZR, #30
 
     BL binary_search
 
